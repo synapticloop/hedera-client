@@ -34,9 +34,13 @@
 
 	<target name="dist" depends="clean,init">
 		<javac srcdir="${src.java.dir}" destdir="${build.dir}" classpathref="compile.classpath" debug="on" />
-		<jar destfile="${dist.dir}/${ant.project.name}.jar">
+
+		<jar destfile="${dist.dir}/${ant.project.name}-${build.number}.jar">
 			<fileset dir="${build.dir}">
 				<include name="**/*.*" />
+			</fileset>
+			<fileset dir="${src.java.dir}">
+				<include name="**/*.properties" />
 			</fileset>
 		</jar>
 	</target>
@@ -46,7 +50,7 @@
 		<hedera hederaFile="hedera-test.xml" />
 	</target>
 
-	<target name="current-number">
+	<target name="current-build-number">
 		<echo>Current build number:> ${build.number}</echo>
 	</target>
 
@@ -54,6 +58,7 @@
 		<propertyfile file="build_number.properties">
 			<entry key="build.revision.number" type="int" operation="+" value="1" pattern="0" />
 		</propertyfile>
+		<antcall target="dist" />
 	</target>
 
 	<target name="minor">
@@ -61,6 +66,7 @@
 			<entry key="build.minor.number" type="int" operation="+" value="1" pattern="0" />
 			<entry key="build.revision.number" type="int" value="0" pattern="0" />
 		</propertyfile>
+		<antcall target="dist" />
 	</target>
 
 	<target name="major">
@@ -69,6 +75,7 @@
 			<entry key="build.minor.number" type="int" value="0" pattern="0" />
 			<entry key="build.revision.number" type="int" value="0" pattern="0" />
 		</propertyfile>
+		<antcall target="dist" />
 	</target>
 
 	<target name="all">
