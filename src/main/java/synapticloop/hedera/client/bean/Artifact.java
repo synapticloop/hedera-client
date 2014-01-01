@@ -179,7 +179,7 @@ public class Artifact {
 	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder();
 		if(null != url && url.trim().length() != 0) {
-			stringBuilder.append("{ \"url\":\"" + url + "\" ");
+			stringBuilder.append("{ \"url\":\"" + url + "\", ");
 		} else {
 			stringBuilder.append("{ \"org\":\"" + org + "\", ");
 			stringBuilder.append("\"name\":\"" + name + "\", ");
