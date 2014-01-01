@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="hedera-client" default="help">
+	<description>Build Hedera</description>
+
+	<property name="lib.compile.dir" value="lib/compile" />
+
+	<property name="src.dir" value="src/main" />
+	<property name="src.java.dir" value="${src.dir}/java" />
+
+	<property name="build.dir" value="build" />
+	<property name="dist.dir" value="dist" />
+
+	<property file="build_number.properties" />
+	<property name="build.number" value="${build.major.number}.${build.minor.number}.${build.revision.number}" />
+
+	<target name="clean">
+		<delete dir="${build.dir}" />
+		<delete dir="${dist.dir}" />
+	</target>
+
+	<target name="init">
+		<antcall target="current-build-number" />
+
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${dist.dir}" />
+	</target>
+
+
+	<path id="compile.classpath">
+		<fileset dir="${lib.compile.dir}">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+	<target name="dist" depends="clean,init">
+		<javac srcdir="${src.java.dir}" destdir="${build.dir}" classpathref="compile.classpath" debug="on" />
+		<jar destfile="${dist.dir}/${ant.project.name}.jar">
+			<fileset dir="${build.dir}">
+				<include name="**/*.*" />
+			</fileset>
+		</jar>
+	</target>
+
+	<target name="test" depends="dist">
+		<taskdef name="hedera" classname="synapticloop.hedera.ant.HederaTask" classpath="${dist.dir}/${ant.project.name}.jar" />
+		<hedera hederaFile="hedera-test.xml" />
+	</target>
+
+	<target name="current-number">
+		<echo>Current build number:> ${build.number}</echo>
+	</target>
+
+	<target name="revision">
+		<propertyfile file="build_number.properties">
+			<entry key="build.revision.number" type="int" operation="+" value="1" pattern="0" />
+		</propertyfile>
+	</target>
+
+	<target name="minor">
+		<propertyfile  file="build_number.properties">
+			<entry key="build.minor.number" type="int" operation="+" value="1" pattern="0" />
+			<entry key="build.revision.number" type="int" value="0" pattern="0" />
+		</propertyfile>
+	</target>
+
+	<target name="major">
+		<propertyfile file="build_number.properties">
+			<entry key="build.major.number" type="int" operation="+" value="1" pattern="0" />
+			<entry key="build.minor.number" type="int" value="0" pattern="0" />
+			<entry key="build.revision.number" type="int" value="0" pattern="0" />
+		</propertyfile>
+	</target>
+
+	<target name="all">
+		<propertyfile  file="build_number.properties">
+			<entry key="build.major.number" type="int" operation="+" value="1" pattern="0" />
+			<entry key="build.minor.number" type="int" operation="+" value="1" pattern="0" />
+			<entry key="build.revision.number" type="int" operation="+" value="1" pattern="0" />
+		</propertyfile>
+	</target>
+
+	<target name="help" description="print out a help message">
+		<echo>
+type:
+	ant -p
+
+for a complete list of targets
+		</echo>
+	</target>
+
+</project>

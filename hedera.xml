@@ -1,0 +1,9 @@
+<hedera>
+	<repository url="http://localhost:8080/" />
+
+	<location type="compile" dir="lib/compile" />
+	<location type="runtime" dir="lib/runtime" />
+	<location type="test" dir="lib/test" />
+
+	<artifact org="" name="" version="" type="" library="" />
+</hedera>
