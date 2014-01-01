@@ -178,10 +178,14 @@ public class Artifact {
 
 	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("{ \"org\":\"" + org + "\", ");
-		stringBuilder.append("\"name\":\"" + name + "\", ");
-		stringBuilder.append("\"version\":\"" + version + "\", ");
-		stringBuilder.append("\"type\":\"" + type + "\", ");
+		if(null != url && url.trim().length() != 0) {
+			stringBuilder.append("{ \"url\":\"" + url + "\" ");
+		} else {
+			stringBuilder.append("{ \"org\":\"" + org + "\", ");
+			stringBuilder.append("\"name\":\"" + name + "\", ");
+			stringBuilder.append("\"version\":\"" + version + "\", ");
+			stringBuilder.append("\"type\":\"" + type + "\", ");
+		}
 		stringBuilder.append("\"locations\": [ ");
 		Iterator<String> locationsIterator = locations.iterator();
 		while (locationsIterator.hasNext()) {
