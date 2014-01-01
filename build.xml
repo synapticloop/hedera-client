@@ -33,16 +33,26 @@
 	</path>
 
 	<target name="dist" depends="clean,init">
+		<copy todir="${build.dir}">
+			<fileset dir="${src.java.dir}">
+				<include name="*.properties"/>
+			</fileset>
+		</copy>
+
 		<javac srcdir="${src.java.dir}" destdir="${build.dir}" classpathref="compile.classpath" debug="on" />
 
 		<jar destfile="${dist.dir}/${ant.project.name}-${build.number}.jar">
 			<fileset dir="${build.dir}">
 				<include name="**/*.*" />
 			</fileset>
-			<fileset dir="${src.java.dir}">
-				<include name="**/*.properties" />
-			</fileset>
 		</jar>
+
+		<copy todir="${dist.dir}">
+			<fileset dir=".">
+				<include name="hedera-build.xml" />
+			</fileset>
+		</copy>
+
 	</target>
 
 	<target name="test" depends="dist">
