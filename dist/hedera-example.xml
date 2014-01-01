@@ -1,8 +1,4 @@
 <hedera>
-	<!--
-	  This is an example hedera file
-	  -->
-
 	<repository url="http://localhost:5474/" />
 
 	<location name="compile" dir="lib/compile" />

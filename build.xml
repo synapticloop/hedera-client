@@ -47,9 +47,12 @@
 			</fileset>
 		</jar>
 
+		<copy tofile="${dist.dir}/${ant.project.name}-latest.jar" file="${dist.dir}/${ant.project.name}-${build.number}.jar" />
+
 		<copy todir="${dist.dir}">
 			<fileset dir=".">
 				<include name="hedera-build.xml" />
+				<include name="hedera-example.xml" />
 			</fileset>
 		</copy>
 
