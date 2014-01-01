@@ -72,7 +72,6 @@ public class Artifact {
 				binaryPathBuilder.append(name);
 			}
 			if(null != version) {
-				artifactPathBuilder.append(version + "/");
 				binaryPathBuilder.append("-");
 				binaryPathBuilder.append(version);
 			}

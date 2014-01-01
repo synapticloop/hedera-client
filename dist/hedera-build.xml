@@ -6,6 +6,10 @@
 		<hedera />
 	</target>
 
+	<target name="hedera-push" description="execute hedera">
+		<hedera.push file="${dist.dir}/hedera-client-latest.jar" />
+	</target>
+
 	<target name="hedera-help" description="help for hedera">
 	</target>
 </project>

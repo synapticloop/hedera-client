@@ -1,6 +1,6 @@
 <hedera>
 	<repository url="http://localhost:8080/" />
-	<repository url="http://localhost:5474/" />
+	<repository url="http://localhost:5474/" type="master" />
 
 	<location name="compile" dir="lib/compile" />
 	<location name="runtime" dir="lib/runtime" />
