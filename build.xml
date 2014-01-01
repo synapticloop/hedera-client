@@ -2,7 +2,6 @@
 <project name="hedera-client" default="help">
 	<description>Build Hedera</description>
 
-
 	<property name="lib.compile.dir" value="lib/compile" />
 
 	<property name="src.dir" value="src/main" />
@@ -59,13 +58,14 @@
 
 	</target>
 
-	<taskdef resource="hedera.properties" classpath="${dist.dir}/hedera-client-latest.jar" />
 
 	<target name="test" depends="dist">
+		<taskdef resource="hedera.properties" classpath="${dist.dir}/hedera-client-latest.jar" />
 		<hedera hederaFile="hedera-test.xml" />
 	</target>
 
 	<target name="test-push" depends="dist">
+		<taskdef resource="hedera.properties" classpath="${dist.dir}/hedera-client-latest.jar" />
 		<hedera.push file="${dist.dir}/hedera-client-latest.jar" hederaFile="hedera-test.xml" org="synapticloop" name="hedera-client" version="${build.number}" type="jar" />
 		<hedera.push file="${dist.dir}/hedera-client-latest.jar" hederaFile="hedera-test.xml" org="synapticloop/../../../../" name="hedera-client" version="latest" type="jar" />
 	</target>

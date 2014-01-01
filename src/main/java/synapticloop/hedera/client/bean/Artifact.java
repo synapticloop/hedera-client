@@ -103,14 +103,13 @@ public class Artifact {
 				break;
 			}
 
-			urlPath = repository.getUrl() + artifactPath + binaryPath;
+			urlPath = repository.getUrl() + "api/" + artifactPath + binaryPath;
 			downloadFile(allLocations);
 		}
 
 	}
 
-	private void downloadFile(HashMap<String, Location> allLocations)
-			throws HederaException {
+	private void downloadFile(HashMap<String, Location> allLocations) throws HederaException {
 		URL url;
 		try {
 			url = new URL(urlPath);

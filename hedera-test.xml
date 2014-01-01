@@ -8,6 +8,7 @@
 
 	<artifact url="https://github.com/synapticloop/routemaster/raw/master/dist/routemaster.jar" locations="compile,runtime" />
 	<artifact url="http://repo1.maven.org/maven2/org/ocpsoft/prettytime/prettytime/3.2.3.Final/prettytime-3.2.3.Final.jar" locations="compile,runtime" />
+	<artifact org="synapticloop" name="hedera-client" version="latest" type="jar" locations="compile,runtime" />
 	<artifact org="org" name="name" version="version" type="type" locations="compile,runtime" />
 	<artifact name="julian" type="jar" locations="compile, runtime" />
 </hedera>
