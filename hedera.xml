@@ -4,6 +4,16 @@
 	  -->
 
 	<!--
+	  You may wish to define your own tokens here... - this is not necessary 
+	  
+	  this will clear all of the allowed tokens first, and then add the tokens back in
+	  -->
+	<token name="group" />
+	<token name="name" />
+	<token name="version" />
+	<token name="type" />
+
+	<!--
 	  First up define your repository shortcuts
 	  
 	  Repositories can be tokenised with any of the following tokens:

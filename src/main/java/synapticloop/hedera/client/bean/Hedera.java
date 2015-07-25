@@ -18,6 +18,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import synapticloop.hedera.client.exception.HederaException;
+import synapticloop.hedera.client.util.HederaUtils;
 
 public class Hedera {
 	private Map<String, Scope> scopes = new HashMap<String, Scope>();
@@ -34,9 +35,17 @@ public class Hedera {
 			documentBuilder = documentBuilderFactory.newDocumentBuilder();
 			Document document = documentBuilder.parse(hederaXmlFile);
 
+			NodeList tokens = document.getElementsByTagName("token");
+			for (int i = 0; i < tokens.getLength(); i++) {
+				if(i == 0) {
+					Repository.clearTokens();
+				}
+				Repository.addToken(HederaUtils.getNodeValue(tokens.item(i).getAttributes(), "name"));
+			}
+
 			NodeList scopes = document.getElementsByTagName("scope");
 
-			for(int i =0; i < scopes.getLength(); i++) {
+			for(int i = 0; i < scopes.getLength(); i++) {
 				addScope(new Scope(scopes.item(i)));
 			}
 

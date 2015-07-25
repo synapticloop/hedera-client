@@ -31,7 +31,8 @@ public class Repository {
 		this.url = HederaUtils.getNodeValue(attributes, "url");
 
 		this.name = HederaUtils.getNodeValue(attributes, "name");
-		// now get the tokens
+
+		// now get the tokens - if they exist
 		if(null == url || null == name) {
 			SimpleLogger.logFatal(LoggerType.REPOSITORY, "Repository node __MUST__ have both 'url' and 'name' attributes: " + this.toString());
 		}
@@ -46,16 +47,32 @@ public class Repository {
 			SimpleLogger.logInfo(LoggerType.REPOSITORY, "Repository '" + name + "' is tokenised:");
 			for (String token : tokens) {
 				if(ALLOWABLE_TOKENS.contains(token)) {
-					SimpleLogger.logInfo(LoggerType.REPOSITORY, "[   VALID ]'" + token + "'.");
+					SimpleLogger.logInfo(LoggerType.REPOSITORY, "    [   VALID ] '" + token + "'.");
 				} else {
-					SimpleLogger.logInfo(LoggerType.REPOSITORY, "[ INVALID ]'" + token + "'.");
+					SimpleLogger.logInfo(LoggerType.REPOSITORY, "    [ INVALID ] '" + token + "'.");
 				}
 			}
 		}
 	}
 
 	public String getUrl() { return url; }
-	
+
+	/**
+	 * Clear all of the allowable tokens for a repository
+	 */
+	public static void clearTokens() {
+		ALLOWABLE_TOKENS.clear();
+	}
+
+	/**
+	 * Add a token to the allowable tokens map
+	 * 
+	 * @param token the token to be added
+	 */
+	public static void addToken(String token) {
+		SimpleLogger.logInfo(LoggerType.TOKEN, "Adding in repository token of '" + token + "'.");
+		ALLOWABLE_TOKENS.add(token);
+	}
 
 	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder();

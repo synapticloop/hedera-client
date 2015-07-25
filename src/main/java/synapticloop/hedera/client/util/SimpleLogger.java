@@ -5,7 +5,8 @@ public class SimpleLogger {
 		HEDERA,
 		SCOPE,
 		ARTIFACTS,
-		REPOSITORY
+		REPOSITORY,
+		TOKEN
 	}
 
 	private static int maxLength = 0;
