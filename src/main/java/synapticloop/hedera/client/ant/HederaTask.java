@@ -14,7 +14,7 @@ public class HederaTask extends Task {
 	protected Hedera hedera = null;
 
 	public void execute() throws BuildException {
-		SimpleLogger.logInfo(LoggerType.HEDERA, "Hedera executing with '" + hederaFile + "'.");
+		SimpleLogger.logInfo(LoggerType.HEDERA, "Hedera initialising with input file: '" + hederaFile + "'.");
 
 		try {
 			hedera = new Hedera(hederaFile);

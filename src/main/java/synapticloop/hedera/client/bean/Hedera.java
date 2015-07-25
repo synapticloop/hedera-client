@@ -2,12 +2,7 @@ package synapticloop.hedera.client.bean;
 
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -120,40 +115,6 @@ public class Hedera {
 		}
 		if(hasError) {
 			throw new HederaException("Resolution errors in hedera.");
-		}
-	}
-
-	public void executePush(ArrayList<Repository> masterRepositories, String fileName, String location) throws HederaException {
-		// try and load the file
-		File file = new File(fileName);
-		FileInputStream fis = null;
-		try {
-			fis = new FileInputStream(file);
-
-
-			byte[] data = new byte[fis.available()];
-			fis.read(data);
-
-			// now go through and push to each of the master repositories
-			for (Repository repository : masterRepositories) {
-				String repositoryUrl = repository.getUrl() + "api/" + location;
-				URL url = new URL(repositoryUrl);
-				System.out.println("Attempting push of '" + fileName + "' to repository '" + repositoryUrl + "'");
-				HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
-				httpCon.setDoOutput(true);
-				httpCon.setRequestMethod("PUT");
-				OutputStream outputStream = httpCon.getOutputStream();
-				outputStream.write(data);
-				outputStream.close();
-				int responseCode = httpCon.getResponseCode();
-				if(responseCode != 200) {
-					System.out.println("FATAL: got response code of '" + responseCode + "' for repository url '" + repositoryUrl + "'.");
-				}
-			}
-		} catch (FileNotFoundException fnfex) {
-			throw new HederaException(fnfex.getMessage());
-		} catch (IOException ioex) {
-			throw new HederaException(ioex.getMessage());
 		}
 	}
 

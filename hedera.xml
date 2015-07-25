@@ -12,6 +12,9 @@
 	    {version} - the version of the artifact
 	    {type} - the file extension
 	  -->
+	<repository url="https://github.com/{group}/{name}/raw/master/dist/{name}-{version}.{type}" name="github-versioned" />
+	<repository url="https://github.com/{group}/{name}/raw/master/dist/{name}.{type}" name="github-unversioned" />
+
 	<repository url="https://github.com/synapticloop/{name}/raw/master/dist/{name}-{version}.{type}" name="github-synapticloop-versioned" />
 	<repository url="https://github.com/synapticloop/{name}/raw/master/dist/{name}.{type}" name="github-synapticloop-unversioned" />
 
@@ -33,4 +36,5 @@
 	  the tokens may not be replaced correctly in the repository leading to spurious results.
 	  -->
 	<artifact repository="github-synapticloop-versioned" name="hedera-client" version="latest" type="jar" scopes="utils" /> 
+	<artifact repository="github-synapticloop-unversioned" name="hedera-client" version="latest" type="jar" scopes="utils" /> 
 </hedera>

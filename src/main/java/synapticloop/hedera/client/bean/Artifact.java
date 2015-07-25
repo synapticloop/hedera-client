@@ -10,9 +10,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -33,30 +35,48 @@ public class Artifact {
 
 	private String repository = null;
 
+	private String dependency = null;
 	private String name = null;
 	private String version = null;
 	private String type = null;
 	private String group = null;
 
-	
+	private static final Set<String> ALLOWABLE_DEPENDENCIES = new HashSet<String>();
+	static {
+		ALLOWABLE_DEPENDENCIES.add("pom.xml");
+		ALLOWABLE_DEPENDENCIES.add("hedera.xml");
+	}
+
 	private List<String> scopes = new ArrayList<String>();
 
 	public Artifact(Node node) throws HederaException {
 		NamedNodeMap attributes = node.getAttributes();
 
-		validateScopes(attributes);
 
 		// at this point it is either a simple url
 		this.url = HederaUtils.getNodeValue(attributes, "url");
 
-		// or a repository
+		this.dependency = HederaUtils.getNodeValue(attributes, "dependency");
+
+
+		// or a repository - with possible tokens
 		this.repository = HederaUtils.getNodeValue(attributes, "repository");
 		this.name  = HederaUtils.getNodeValue(attributes, "name");
 		this.group  = HederaUtils.getNodeValue(attributes, "group");
 		this.version  = HederaUtils.getNodeValue(attributes, "version");
 		this.type = HederaUtils.getNodeValue(attributes, "type");
 
-		if(null == url) {
+		// now for some validation
+		validateDependencies(dependency);
+		validateScopes(attributes);
+
+		// now we are ready to go!
+
+		if(null != url) {
+			int lastIndexOf = url.lastIndexOf("/");
+			artifactPath = url.substring(0, lastIndexOf);
+			binaryPath = url.substring(lastIndexOf + 1);
+		} else {
 			StringBuilder artifactPathBuilder = new StringBuilder();
 			StringBuilder binaryPathBuilder = new StringBuilder();
 			if(null != name) {
@@ -73,13 +93,20 @@ public class Artifact {
 			}
 			this.binaryPath = binaryPathBuilder.toString();
 			this.artifactPath = artifactPathBuilder.toString();
-		} else {
-			int lastIndexOf = url.lastIndexOf("/");
-			artifactPath = url.substring(0, lastIndexOf);
-			binaryPath = url.substring(lastIndexOf + 1);
 		}
 
 
+	}
+
+	private void validateDependencies(String dependency) throws HederaException {
+		if(null == dependency) {
+			return;
+		}
+
+		if(!ALLOWABLE_DEPENDENCIES.contains(dependency)) {
+			// TODO dynamic list please
+			throw new HederaException("Dependency of '" + dependency + "' was defined, but only the following dependencies are allowed: 'pom.xml' and 'hedera.xml''");
+		}
 	}
 
 	private void validateScopes(NamedNodeMap attributes) throws HederaException {

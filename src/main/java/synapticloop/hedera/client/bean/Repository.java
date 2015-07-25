@@ -41,11 +41,15 @@ public class Repository {
 		tokens.clear();
 		tokens.addAll(tokenSet);
 
-		for (String token : tokens) {
-			if(ALLOWABLE_TOKENS.contains(token)) {
-				SimpleLogger.logInfo(LoggerType.REPOSITORY, "Repository named '" + name + "' is tokenised with valid token '" + token + "'.");
-			} else {
-				SimpleLogger.logFatal(LoggerType.REPOSITORY, "Repository named '" + name + "' is tokenised with invalid token '" + token + "'.");
+
+		if(!tokens.isEmpty()) {
+			SimpleLogger.logInfo(LoggerType.REPOSITORY, "Repository '" + name + "' is tokenised:");
+			for (String token : tokens) {
+				if(ALLOWABLE_TOKENS.contains(token)) {
+					SimpleLogger.logInfo(LoggerType.REPOSITORY, "[   VALID ]'" + token + "'.");
+				} else {
+					SimpleLogger.logInfo(LoggerType.REPOSITORY, "[ INVALID ]'" + token + "'.");
+				}
 			}
 		}
 	}
