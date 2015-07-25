@@ -71,7 +71,7 @@ public class Repository {
 	 * @param token the token to be added
 	 */
 	public static void addToken(String token) {
-		SimpleLogger.logInfo(LoggerType.TOKEN, "Adding in repository token of '" + token + "'.");
+		SimpleLogger.logInfo(LoggerType.REPOSITORY_TOKEN, "Adding in repository token of '" + token + "'.");
 		ALLOWABLE_TOKENS.add(token);
 	}
 

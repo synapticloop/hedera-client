@@ -32,17 +32,17 @@
 	<scope name="compile" dir="lib/compile" />
 	<scope name="runtime" dir="lib/runtime" />
 	<scope name="test" dir="lib/test" />
-	<scope name="utils" dir="lib/utils" />
+	<scope name="hedera" dir="lib/hedera" />
 
 	<!--
 	  The most basic artefact type is just a simple url and scopes
 	  -->
-	<artifact url="https://github.com/synapticloop/hedera-client/raw/master/dist/hedera-client-latest.jar" scopes="utils" />
+	<artifact url="https://github.com/synapticloop/hedera-client/raw/master/dist/hedera-client-latest.jar" scopes="hedera" />
 
 	<!--
 	  An artifact referring to a 'tokened' repository, you __SHOULD__ have the same attributes here as the tokens, else 
 	  the tokens may not be replaced correctly in the repository leading to spurious results.
 	  -->
-	<artifact repository="github-versioned" group="synapticloop" name="hedera-client" version="latest" type="jar" scopes="utils" /> 
-	<artifact repository="github-synapticloop-versioned" name="hedera-client" version="latest" type="jar" scopes="utils" /> 
+	<artifact repository="github-versioned" group="synapticloop" name="hedera-client" version="latest" type="jar" scopes="hedera" /> 
+	<artifact repository="github-synapticloop-versioned" name="hedera-client" version="latest" type="jar" scopes="hedera" /> 
 </hedera>

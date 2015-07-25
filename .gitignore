@@ -1,10 +1,5 @@
-
 .project
-
 build-eclipse
-
 build
-
 lib/test/
-
 .classpath

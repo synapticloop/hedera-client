@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="hedera" default="hedera-help">
-	<property name="dist.dir" location="dist" />
 
-	<taskdef resource="hedera.properties" classpath="${dist.dir}/hedera-client-latest.jar" />
+	<taskdef resource="hedera.properties" classpath="dist/hedera-client-latest.jar" />
 
 	<target name="hedera" description="execute hedera">
 		<hedera />
-	</target>
-
-	<target name="hedera-push" description="execute hedera">
-		<hedera.push file="${dist.dir}/hedera-client-latest.jar" />
 	</target>
 
 	<target name="hedera-help" description="help for hedera">

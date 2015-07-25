@@ -6,7 +6,7 @@ public class SimpleLogger {
 		SCOPE,
 		ARTIFACT,
 		REPOSITORY,
-		TOKEN,
+		REPOSITORY_TOKEN,
 		ARTEFACT_DOWNLOAD,
 		ARTEFACT_URL
 	}
