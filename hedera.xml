@@ -23,10 +23,8 @@
 	    {type} - the file extension
 	  -->
 	<repository url="https://github.com/{group}/{name}/raw/master/dist/{name}-{version}.{type}" name="github-versioned" />
-	<repository url="https://github.com/{group}/{name}/raw/master/dist/{name}.{type}" name="github-unversioned" />
 
 	<repository url="https://github.com/synapticloop/{name}/raw/master/dist/{name}-{version}.{type}" name="github-synapticloop-versioned" />
-	<repository url="https://github.com/synapticloop/{name}/raw/master/dist/{name}.{type}" name="github-synapticloop-unversioned" />
 
 	<!--
 	  Scopes are where the output libraries go
@@ -45,6 +43,6 @@
 	  An artifact referring to a 'tokened' repository, you __SHOULD__ have the same attributes here as the tokens, else 
 	  the tokens may not be replaced correctly in the repository leading to spurious results.
 	  -->
+	<artifact repository="github-versioned" group="synapticloop" name="hedera-client" version="latest" type="jar" scopes="utils" /> 
 	<artifact repository="github-synapticloop-versioned" name="hedera-client" version="latest" type="jar" scopes="utils" /> 
-	<artifact repository="github-synapticloop-unversioned" name="hedera-client" version="latest" type="jar" scopes="utils" /> 
 </hedera>

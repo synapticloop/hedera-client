@@ -4,9 +4,11 @@ public class SimpleLogger {
 	public enum LoggerType {
 		HEDERA,
 		SCOPE,
-		ARTIFACTS,
+		ARTIFACT,
 		REPOSITORY,
-		TOKEN
+		TOKEN,
+		ARTEFACT_DOWNLOAD,
+		ARTEFACT_URL
 	}
 
 	private static int maxLength = 0;

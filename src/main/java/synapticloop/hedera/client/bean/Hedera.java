@@ -23,7 +23,7 @@ import synapticloop.hedera.client.util.HederaUtils;
 public class Hedera {
 	private Map<String, Scope> scopes = new HashMap<String, Scope>();
 
-	private List<Repository> repositories = new ArrayList<Repository>();
+	private Map<String, Repository> repositories = new HashMap<String, Repository>();
 	private List<Artifact> artifacts = new ArrayList<Artifact>();
 
 	public Hedera(String hederaFile) throws HederaException {
@@ -52,7 +52,8 @@ public class Hedera {
 			NodeList repositories = document.getElementsByTagName("repository");
 
 			for(int i =0; i < repositories.getLength(); i++) {
-				addRepository(new Repository(repositories.item(i)));
+				Repository repository = new Repository(repositories.item(i));
+				addRepository(repository.getName(), repository);
 			}
 
 			NodeList artifacts = document.getElementsByTagName("artifact");
@@ -63,14 +64,11 @@ public class Hedera {
 
 
 		} catch (ParserConfigurationException pcex) {
-			System.out.println(pcex.getMessage());
-			return;
+			throw new HederaException("Could not parse the hedera file '" + hederaFile + "'.", pcex);
 		} catch (SAXException saxex) {
-			System.out.println(saxex.getMessage());
-			return;
+			throw new HederaException("Could not parse the hedera file '" + hederaFile + "'.", saxex);
 		} catch (IOException ioex) {
-			System.out.println(ioex.getMessage());
-			return;
+			throw new HederaException("Could not parse the hedera file '" + hederaFile + "'.", ioex);
 		}
 	}
 
@@ -128,21 +126,14 @@ public class Hedera {
 	}
 
 	public void addScope(Scope location) { scopes.put(location.getName(), location); }
-	public void addRepository(Repository repository) { repositories.add(repository); }
+	public void addRepository(String name, Repository repository) { repositories.put(name, repository); }
 	public void addArtifact(Artifact artifact) { artifacts.add(artifact); }
-
-	public ArrayList<Repository> getMasterRepositories() {
-		ArrayList<Repository> retVal = new ArrayList<Repository>();
-		for (Repository repository : repositories) {
-		}
-		return(retVal);
-	}
 
 	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder();
 
 		stringBuilder.append("{\n \"repositories\": [ \n");
-		Iterator<Repository> repositoriesIterator = repositories.iterator();
+		Iterator<Repository> repositoriesIterator = repositories.values().iterator();
 		while (repositoriesIterator.hasNext()) {
 			Repository repository = repositoriesIterator.next();
 			stringBuilder.append("  " + repository);

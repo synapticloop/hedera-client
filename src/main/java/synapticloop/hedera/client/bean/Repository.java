@@ -56,6 +56,7 @@ public class Repository {
 	}
 
 	public String getUrl() { return url; }
+	public String getName() { return name; }
 
 	/**
 	 * Clear all of the allowable tokens for a repository

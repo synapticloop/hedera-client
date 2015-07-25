@@ -28,18 +28,12 @@ public class Artifact {
 	private boolean found = false;
 	private List<String> messages = new ArrayList<String>();
 	private String urlPath = null;
-	private String artifactPath = null;
-	private String binaryPath = null;
 
 	private String url = null;
 
 	private String repository = null;
 
 	private String dependency = null;
-	private String name = null;
-	private String version = null;
-	private String type = null;
-	private String group = null;
 
 	private static final Set<String> ALLOWABLE_DEPENDENCIES = new HashSet<String>();
 	static {
@@ -48,9 +42,10 @@ public class Artifact {
 	}
 
 	private List<String> scopes = new ArrayList<String>();
+	private NamedNodeMap attributes;
 
 	public Artifact(Node node) throws HederaException {
-		NamedNodeMap attributes = node.getAttributes();
+		attributes = node.getAttributes();
 
 
 		// at this point it is either a simple url
@@ -61,40 +56,10 @@ public class Artifact {
 
 		// or a repository - with possible tokens
 		this.repository = HederaUtils.getNodeValue(attributes, "repository");
-		this.name  = HederaUtils.getNodeValue(attributes, "name");
-		this.group  = HederaUtils.getNodeValue(attributes, "group");
-		this.version  = HederaUtils.getNodeValue(attributes, "version");
-		this.type = HederaUtils.getNodeValue(attributes, "type");
 
 		// now for some validation
 		validateDependencies(dependency);
 		validateScopes(attributes);
-
-		// now we are ready to go!
-
-		if(null != url) {
-			int lastIndexOf = url.lastIndexOf("/");
-			artifactPath = url.substring(0, lastIndexOf);
-			binaryPath = url.substring(lastIndexOf + 1);
-		} else {
-			StringBuilder artifactPathBuilder = new StringBuilder();
-			StringBuilder binaryPathBuilder = new StringBuilder();
-			if(null != name) {
-				artifactPathBuilder.append(name.replaceAll("-", "/") + "/");
-				binaryPathBuilder.append(name);
-			}
-			if(null != version) {
-				binaryPathBuilder.append("-");
-				binaryPathBuilder.append(version);
-			}
-			if(null != type) {
-				binaryPathBuilder.append(".");
-				binaryPathBuilder.append(type);
-			}
-			this.binaryPath = binaryPathBuilder.toString();
-			this.artifactPath = artifactPathBuilder.toString();
-		}
-
 
 	}
 
@@ -122,7 +87,7 @@ public class Artifact {
 		}
 
 		if(null == scopes || scopes.isEmpty()) {
-			SimpleLogger.logFatal(LoggerType.ARTIFACTS, "Attribut 'scopes' __MUST__ be defined for artefact " + this.toString());
+			SimpleLogger.logFatal(LoggerType.ARTIFACT, "Attribut 'scopes' __MUST__ be defined for artefact " + this.toString());
 			throw new HederaException("Could not validate scopes.");
 		}
 		
@@ -130,22 +95,35 @@ public class Artifact {
 		
 	}
 
-	public void download(List<Repository> repositories, Map<String, Scope> scopes) throws HederaException {
+	public void download(Map<String, Repository> repositories, Map<String, Scope> scopes) throws HederaException {
 		// if we have a url - skip the repositories
 		this.urlPath = url;
 		if(null != url) {
 			downloadFile(scopes);
+			return;
 		}
-		// go through all of the repositories, attempting to find the artifact
-		for (Repository repository : repositories) {
-			if(found) {
-				break;
-			}
 
-			urlPath = repository.getUrl() + "api/" + artifactPath + binaryPath;
+		Repository repository = repositories.get(this.repository);
+
+		if(null == repository) {
+			throw new HederaException("Could not find repository for artifact: '" + this.toString() + "'.");
+		} else {
+			urlPath = replaceTokens(repository.getUrl());
 			downloadFile(scopes);
 		}
 
+	}
+
+	private String replaceTokens(String repositoryUrl) throws HederaException {
+		for (int i = 0; i < attributes.getLength(); i++) {
+			Node item = attributes.item(i);
+			repositoryUrl = repositoryUrl.replaceAll("\\{" + item.getNodeName() + "\\}", item.getNodeValue());
+		}
+		SimpleLogger.logInfo(LoggerType.ARTEFACT_URL, "Found url of '" + repositoryUrl + ".'");
+		if(repositoryUrl.contains("{")) {
+			throw new HederaException("Un-replaced token found in repository URL '" + repositoryUrl + "'");
+		}
+		return(repositoryUrl);
 	}
 
 	private void downloadFile(Map<String, Scope> allScopes) throws HederaException {
@@ -170,7 +148,7 @@ public class Artifact {
 			}
 			in.close();
 
-			System.out.println("Downloaded " + urlPath);
+			SimpleLogger.logInfo(LoggerType.ARTEFACT_DOWNLOAD, "Downloading '" + urlPath + "'.");
 			found = true;
 
 			if (offset != contentLength) {
@@ -187,13 +165,13 @@ public class Artifact {
 					String scope = scopesIterator.next();
 					if(allScopes.containsKey(scope)) {
 						Scope allScope = allScopes.get(scope);
-						String outputPath = allScope.getDir() + "/" + binaryPath;
+						String outputPath = allScope.getDir() + "/" + getBinaryPath();
 						FileOutputStream fos = new FileOutputStream(outputPath);
 						fos.write(data);
 						fos.close();
 						messages.add("  Wrote '" + outputPath + "'.");
 					} else {
-						messages.add("[FATAL] Could not write '" + binaryPath + "' to scope '" + scope + "', this scope does not exist.");
+						messages.add("[FATAL] Could not write '" + getBinaryPath() + "' to scope '" + scope + "', this scope does not exist.");
 					}
 
 				}
@@ -210,6 +188,11 @@ public class Artifact {
 		}
 	}
 
+	private String getBinaryPath() {
+		int lastIndexOf = urlPath.lastIndexOf("/") + 1;
+		return(urlPath.substring(lastIndexOf));
+	}
+
 	public boolean getFound() { return(found); }
 	public List<String> getMessages() { return(messages); }
 
@@ -218,9 +201,6 @@ public class Artifact {
 		if(null != url && url.trim().length() != 0) {
 			stringBuilder.append("{ \"url\":\"" + url + "\", ");
 		} else {
-			stringBuilder.append("{ \"name\":\"" + name + "\", ");
-			stringBuilder.append("\"version\":\"" + version + "\", ");
-			stringBuilder.append("\"type\":\"" + type + "\", ");
 		}
 		stringBuilder.append("\"scopes\": [ ");
 		Iterator<String> scopesIterator = scopes.iterator();
