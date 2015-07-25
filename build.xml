@@ -55,19 +55,12 @@
 				<include name="hedera-example.xml" />
 			</fileset>
 		</copy>
-
 	</target>
 
 
 	<target name="test" depends="dist" description="test hedera with the hedera-test.xml file">
 		<taskdef resource="hedera.properties" classpath="${dist.dir}/hedera-client-latest.jar" />
 		<hedera hederaFile="hedera-test.xml" />
-	</target>
-
-	<target name="test-push" depends="dist">
-		<taskdef resource="hedera.properties" classpath="${dist.dir}/hedera-client-latest.jar" />
-		<hedera.push file="${dist.dir}/hedera-client-latest.jar" hederaFile="hedera-test.xml" name="hedera-client" version="${build.number}" type="jar" />
-		<hedera.push file="${dist.dir}/hedera-client-latest.jar" hederaFile="hedera-test.xml" name="hedera-client" version="latest" type="jar" />
 	</target>
 
 	<target name="current-build-number">

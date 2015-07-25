@@ -5,20 +5,32 @@
 
 	<!--
 	  First up define your repository shortcuts
+	  
+	  Repositories can be tokenised with any of the following tokens:
+	    {group} - the group for the artifact
+	    {name} - the name of the artifact that you want
+	    {version} - the version of the artifact
+	    {type} - the file extension
 	  -->
-
-	<repository url="http://github.com/synapticloop/hedera-client/dist/" name="github-hedera" />
+	<repository url="https://github.com/synapticloop/{name}/raw/master/dist/{name}-{version}.{type}" name="github-synapticloop-versioned" />
+	<repository url="https://github.com/synapticloop/{name}/raw/master/dist/{name}.{type}" name="github-synapticloop-unversioned" />
 
 	<!--
-	  Locations are where the output libraries go
+	  Scopes are where the output libraries go
 	  -->
-	<location name="compile" dir="lib/compile" />
-	<location name="runtime" dir="lib/runtime" />
-	<location name="test" dir="lib/test" />
+	<scope name="compile" dir="lib/compile" />
+	<scope name="runtime" dir="lib/runtime" />
+	<scope name="test" dir="lib/test" />
+	<scope name="utils" dir="lib/utils" />
 
 	<!--
-	  Artifacts have two types, locations and 
+	  The most basic artefact type is just a simple url and scopes
 	  -->
-	<artifact org="" name="" version="" type="" locations="" />
+	<artifact url="https://github.com/synapticloop/hedera-client/raw/master/dist/hedera-client-latest.jar" scopes="utils" />
 
+	<!--
+	  An artifact referring to a 'tokened' repository, you __SHOULD__ have the same attributes here as the tokens, else 
+	  the tokens may not be replaced correctly in the repository leading to spurious results.
+	  -->
+	<artifact repository="github-synapticloop-versioned" name="hedera-client" version="latest" type="jar" scopes="utils" /> 
 </hedera>

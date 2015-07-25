@@ -10,54 +10,51 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 import synapticloop.hedera.client.exception.HederaException;
 import synapticloop.hedera.client.util.HederaUtils;
+import synapticloop.hedera.client.util.SimpleLogger;
+import synapticloop.hedera.client.util.SimpleLogger.LoggerType;
 
 public class Artifact {
 	private boolean found = false;
-	private ArrayList<String> messages = new ArrayList<String>();
+	private List<String> messages = new ArrayList<String>();
 	private String urlPath = null;
 	private String artifactPath = null;
 	private String binaryPath = null;
 
+	private String url = null;
+
+	private String repository = null;
+
 	private String name = null;
 	private String version = null;
 	private String type = null;
-	private String url = null;
-	private ArrayList<String> locations = new ArrayList<String>();
+	private String group = null;
+
+	
+	private List<String> scopes = new ArrayList<String>();
 
 	public Artifact(Node node) throws HederaException {
 		NamedNodeMap attributes = node.getAttributes();
 
+		validateScopes(attributes);
+
+		// at this point it is either a simple url
+		this.url = HederaUtils.getNodeValue(attributes, "url");
+
+		// or a repository
+		this.repository = HederaUtils.getNodeValue(attributes, "repository");
 		this.name  = HederaUtils.getNodeValue(attributes, "name");
+		this.group  = HederaUtils.getNodeValue(attributes, "group");
 		this.version  = HederaUtils.getNodeValue(attributes, "version");
 		this.type = HederaUtils.getNodeValue(attributes, "type");
-		this.url  = HederaUtils.getNodeValue(attributes, "url");
-
-		String locationAttribute  = HederaUtils.getNodeValue(attributes, "locations");
-		if(null != locationAttribute) {
-			String[] splits = locationAttribute.split(",");
-			for (int i = 0; i < splits.length; i++) {
-				String split = splits[i].trim();
-				if(split.length() != 0) {
-					locations.add(split);
-				}
-			}
-		}
-
-		if(null == url && (null == name || null == type)) {
-			throw new HederaException("Element 'artifact' must contain either a 'url' attribute or both 'name' and 'type' attributes, element was " + this.toString());
-		}
-
-		if(locations.size() == 0) {
-			throw new HederaException("Element 'artifact' must have at least one 'locations' attribute, element was " + this.toString());
-		}
 
 		if(null == url) {
 			StringBuilder artifactPathBuilder = new StringBuilder();
@@ -85,11 +82,32 @@ public class Artifact {
 
 	}
 
-	public void download(ArrayList<Repository> repositories, HashMap<String, Location> allLocations) throws HederaException {
+	private void validateScopes(NamedNodeMap attributes) throws HederaException {
+		String scopeAttribute  = HederaUtils.getNodeValue(attributes, "scopes");
+		if(null != scopeAttribute) {
+			String[] splits = scopeAttribute.split(",");
+			for (int i = 0; i < splits.length; i++) {
+				String split = splits[i].trim();
+				if(split.length() != 0) {
+					scopes.add(split);
+				}
+			}
+		}
+
+		if(null == scopes || scopes.isEmpty()) {
+			SimpleLogger.logFatal(LoggerType.ARTIFACTS, "Attribut 'scopes' __MUST__ be defined for artefact " + this.toString());
+			throw new HederaException("Could not validate scopes.");
+		}
+		
+		// at his point we have valid scopes attribute, but do the exist?
+		
+	}
+
+	public void download(List<Repository> repositories, Map<String, Scope> scopes) throws HederaException {
 		// if we have a url - skip the repositories
 		this.urlPath = url;
 		if(null != url) {
-			downloadFile(allLocations);
+			downloadFile(scopes);
 		}
 		// go through all of the repositories, attempting to find the artifact
 		for (Repository repository : repositories) {
@@ -98,12 +116,12 @@ public class Artifact {
 			}
 
 			urlPath = repository.getUrl() + "api/" + artifactPath + binaryPath;
-			downloadFile(allLocations);
+			downloadFile(scopes);
 		}
 
 	}
 
-	private void downloadFile(HashMap<String, Location> allLocations) throws HederaException {
+	private void downloadFile(Map<String, Scope> allScopes) throws HederaException {
 		URL url;
 		try {
 			url = new URL(urlPath);
@@ -136,19 +154,19 @@ public class Artifact {
 			if(found) {
 				messages.clear();
 				messages.add("Found artifact @ " + urlPath);
-				// now we need to write it to the locations
-				Iterator<String> locationsIterator = locations.iterator();
-				while (locationsIterator.hasNext()) {
-					String location = locationsIterator.next();
-					if(allLocations.containsKey(location)) {
-						Location allLocation = allLocations.get(location);
-						String outputPath = allLocation.getDir() + "/" + binaryPath;
+				// now we need to write it to the scopes
+				Iterator<String> scopesIterator = scopes.iterator();
+				while (scopesIterator.hasNext()) {
+					String scope = scopesIterator.next();
+					if(allScopes.containsKey(scope)) {
+						Scope allScope = allScopes.get(scope);
+						String outputPath = allScope.getDir() + "/" + binaryPath;
 						FileOutputStream fos = new FileOutputStream(outputPath);
 						fos.write(data);
 						fos.close();
 						messages.add("  Wrote '" + outputPath + "'.");
 					} else {
-						messages.add("[FATAL] Could not write '" + binaryPath + "' to location '" + location + "', this location does not exist.");
+						messages.add("[FATAL] Could not write '" + binaryPath + "' to scope '" + scope + "', this scope does not exist.");
 					}
 
 				}
@@ -157,7 +175,7 @@ public class Artifact {
 			}
 
 		} catch (MalformedURLException murlex) {
-			throw new HederaException("Malformed repository location of '" + urlPath + "'.");
+			throw new HederaException("Malformed repository scope of '" + urlPath + "'.");
 		} catch (FileNotFoundException fnfex) {
 			messages.add(urlPath + ": File not found");
 		} catch (IOException ioex) {
@@ -166,7 +184,7 @@ public class Artifact {
 	}
 
 	public boolean getFound() { return(found); }
-	public ArrayList<String> getMessages() { return(messages); }
+	public List<String> getMessages() { return(messages); }
 
 	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder();
@@ -177,12 +195,12 @@ public class Artifact {
 			stringBuilder.append("\"version\":\"" + version + "\", ");
 			stringBuilder.append("\"type\":\"" + type + "\", ");
 		}
-		stringBuilder.append("\"locations\": [ ");
-		Iterator<String> locationsIterator = locations.iterator();
-		while (locationsIterator.hasNext()) {
-			String location = locationsIterator.next();
-			stringBuilder.append("\"" + location + "\"");
-			if(locationsIterator.hasNext()) {
+		stringBuilder.append("\"scopes\": [ ");
+		Iterator<String> scopesIterator = scopes.iterator();
+		while (scopesIterator.hasNext()) {
+			String scope = scopesIterator.next();
+			stringBuilder.append("\"" + scope + "\"");
+			if(scopesIterator.hasNext()) {
 				stringBuilder.append(", ");
 			}
 		}
