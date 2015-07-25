@@ -2,6 +2,7 @@ package synapticloop.hedera.client.bean;
 
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -127,6 +128,32 @@ public class Artifact {
 	}
 
 	private void downloadFile(Map<String, Scope> allScopes) throws HederaException {
+
+		Iterator<String> scopesIterator = scopes.iterator();
+
+		Set<String> remainingScopes = new HashSet<String>();
+
+		while (scopesIterator.hasNext()) {
+			String scope = scopesIterator.next();
+			if(allScopes.containsKey(scope)) {
+				Scope allScope = allScopes.get(scope);
+				String outputPath = allScope.getDir() + "/" + getBinaryPath();
+				File file = new File(outputPath);
+
+				if(file.exists()) {
+					SimpleLogger.logWarn(LoggerType.ARTEFACT_DOWNLOAD, "Artefact exists in scope '" + allScope.getDir() + "/" + getBinaryPath() + "', ignoring.");
+				} else {
+					remainingScopes.add(scope);
+				}
+			}
+		}
+
+		if(remainingScopes.isEmpty()) {
+			SimpleLogger.logWarn(LoggerType.ARTEFACT_DOWNLOAD, "No scopes left for download.");
+			found = true;
+			return;
+		}
+
 		URL url;
 		try {
 			url = new URL(urlPath);
@@ -160,7 +187,7 @@ public class Artifact {
 				messages.clear();
 				messages.add("Found artifact @ " + urlPath);
 				// now we need to write it to the scopes
-				Iterator<String> scopesIterator = scopes.iterator();
+				scopesIterator = remainingScopes.iterator();
 				while (scopesIterator.hasNext()) {
 					String scope = scopesIterator.next();
 					if(allScopes.containsKey(scope)) {
