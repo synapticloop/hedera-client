@@ -35,7 +35,7 @@ public class Hedera {
 			documentBuilder = documentBuilderFactory.newDocumentBuilder();
 			Document document = documentBuilder.parse(hederaXmlFile);
 
-			NodeList tokens = document.getElementsByTagName("token");
+			NodeList tokens = document.getElementsByTagName("repository-token");
 			for (int i = 0; i < tokens.getLength(); i++) {
 				if(i == 0) {
 					Repository.clearTokens();

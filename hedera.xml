@@ -8,10 +8,10 @@
 	  
 	  this will clear all of the allowed tokens first, and then add the tokens back in
 	  -->
-	<token name="group" />
-	<token name="name" />
-	<token name="version" />
-	<token name="type" />
+	<repository-token name="group" />
+	<repository-token name="name" />
+	<repository-token name="version" />
+	<repository-token name="type" />
 
 	<!--
 	  First up define your repository shortcuts
