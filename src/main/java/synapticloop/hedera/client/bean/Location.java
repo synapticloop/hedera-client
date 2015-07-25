@@ -23,7 +23,7 @@ public class Location {
 	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append("{ \"name\":\"" + name + "\", ");
-		stringBuilder.append("\"dir\":\"" + dir + "\" }\n");
+		stringBuilder.append("\"dir\":\"" + dir + "\" }");
 		return (stringBuilder.toString());
 	}
 

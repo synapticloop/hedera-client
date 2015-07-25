@@ -34,7 +34,7 @@ public class Repository {
 
 	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("{ \"url\":\"" + url + "\", \"type\":\"" + type + "\" }\n");
+		stringBuilder.append("{ \"url\":\"" + url + "\", \"type\":\"" + type + "\" }");
 		return (stringBuilder.toString());
 	}
 }

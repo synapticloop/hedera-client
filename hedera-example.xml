@@ -5,6 +5,6 @@
 	<location name="runtime" dir="lib/runtime" />
 	<location name="test" dir="lib/test" />
 
-	<artifact org="" name="" version="" type="" locations="" />
+	<artifact name="" version="" type="" locations="" />
 
 </hedera>

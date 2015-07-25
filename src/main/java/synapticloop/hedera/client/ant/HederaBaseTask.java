@@ -7,7 +7,7 @@ import synapticloop.hedera.client.bean.Hedera;
 import synapticloop.hedera.client.exception.HederaException;
 
 public abstract class HederaBaseTask extends Task {
-	protected String hederaFile = "hedera.xml";
+	protected String hederaFile = "hedera";
 	protected Hedera hedera = null;
 	
 	public void execute() throws BuildException {

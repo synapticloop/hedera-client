@@ -10,7 +10,6 @@ import synapticloop.hedera.client.exception.HederaException;
 
 public class HederaPushTask extends HederaBaseTask {
 	private String file = null;
-	private String org = null;
 	private String name = null;
 	private String version = null;
 	private String type = null;
@@ -34,9 +33,8 @@ public class HederaPushTask extends HederaBaseTask {
 	public String getRepositoryPath() {
 		StringBuilder repositoryPathBuilder = new StringBuilder();
 		StringBuilder artifactNameBuilder = new StringBuilder();
-		if(null != org) { repositoryPathBuilder.append(org + "/"); }
 		if(null != name) { 
-			repositoryPathBuilder.append(name + "/");
+			repositoryPathBuilder.append(name.replaceAll("-", "/") + "/");
 			artifactNameBuilder.append(name);
 		}
 		if(null != version) { 
@@ -54,7 +52,6 @@ public class HederaPushTask extends HederaBaseTask {
 
 	public void setHederaFile(String hederaFile) { this.hederaFile = hederaFile; }
 	public void setFile(String file) { this.file = file; }
-	public void setOrg(String org) { this.org = org; }
 	public void setName(String name) { this.name = name; }
 	public void setVersion(String version) { this.version = version; }
 	public void setType(String type) { this.type = type; }

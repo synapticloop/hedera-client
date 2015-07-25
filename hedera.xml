@@ -3,12 +3,22 @@
 	  This is an example hedera file
 	  -->
 
-	<repository url="http://localhost:5474/" type="master" />
+	<!--
+	  First up define your repository shortcuts
+	  -->
 
+	<repository url="http://github.com/synapticloop/hedera-client/dist/" name="github-hedera" />
+
+	<!--
+	  Locations are where the output libraries go
+	  -->
 	<location name="compile" dir="lib/compile" />
 	<location name="runtime" dir="lib/runtime" />
 	<location name="test" dir="lib/test" />
 
+	<!--
+	  Artifacts have two types, locations and 
+	  -->
 	<artifact org="" name="" version="" type="" locations="" />
 
 </hedera>

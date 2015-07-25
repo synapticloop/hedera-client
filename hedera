@@ -1,0 +1,8 @@
+master-repository:http://localhost:5474/
+
+location:compile	lib/compile
+location:runtime	lib/runtime
+location:test	lib/test
+
+url:https://github.com/synapticloop/routemaster/raw/master/dist/routemaster.jar	test
+url:http://repo1.maven.org/maven2/org/ocpsoft/prettytime/prettytime/3.2.3.Final/prettytime-3.2.3.Final.jar"	test

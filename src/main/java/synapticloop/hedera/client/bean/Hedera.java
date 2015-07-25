@@ -23,10 +23,10 @@ import org.xml.sax.SAXException;
 import synapticloop.hedera.client.exception.HederaException;
 
 public class Hedera {
-	private HashMap<String, Location> locations= new HashMap<String, Location>();
+	private HashMap<String, Location> locations = new HashMap<String, Location>();
 
 	private ArrayList<Repository> repositories = new ArrayList<Repository>();
-	private ArrayList<Artifact> artifacts= new ArrayList<Artifact>();
+	private ArrayList<Artifact> artifacts = new ArrayList<Artifact>();
 
 	public Hedera(String hederaFile) throws HederaException {
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -66,6 +66,7 @@ public class Hedera {
 	}
 
 	public void execute() throws HederaException {
+		boolean hasError = false;
 		// first thing that we want to do is to create the directories
 		Iterator<Location> locationsIterator = locations.values().iterator();
 		while (locationsIterator.hasNext()) {
@@ -86,6 +87,7 @@ public class Hedera {
 		while (artifactsIterator.hasNext()) {
 			Artifact artifact = artifactsIterator.next();
 			if(!artifact.getFound()) {
+				hasError = true;
 				if(first) {
 					System.out.println("\n+-----------------------------+");
 					System.out.println("| Error in Hedera resolution: |");
@@ -116,6 +118,9 @@ public class Hedera {
 					System.out.println("  " + message);
 				}
 			}
+		}
+		if(hasError) {
+			throw new HederaException("Resolution errors in hedera.");
 		}
 	}
 
@@ -170,27 +175,42 @@ public class Hedera {
 	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder();
 
-		stringBuilder.append(repositories.size() + " Repositories:\n");
+		stringBuilder.append("{\n \"repositories\": [ \n");
 		Iterator<Repository> repositoriesIterator = repositories.iterator();
 		while (repositoriesIterator.hasNext()) {
 			Repository repository = repositoriesIterator.next();
 			stringBuilder.append("  " + repository);
+			if(repositoriesIterator.hasNext()) {
+				stringBuilder.append(", ");
+			}
+			stringBuilder.append("\n");
 		}
+		stringBuilder.append(" ]\n");
 
-		stringBuilder.append(locations.size() + " Locations:\n");
+		stringBuilder.append("\"locations\": [ \n");
 		Iterator<Location> locationsIterator = locations.values().iterator();
+
 		while (locationsIterator.hasNext()) {
 			Location location = locationsIterator.next();
 			stringBuilder.append("  " + location);
+			if(locationsIterator.hasNext()) {
+				stringBuilder.append(", ");
+			}
+			stringBuilder.append("\n");
 		}
+		stringBuilder.append(" ]\n");
 
-		stringBuilder.append(artifacts.size() + " Artifacts:\n");
+		stringBuilder.append("\"artifacts\" : [ \n");
 		Iterator<Artifact> artifactsIterator = artifacts.iterator();
 		while (artifactsIterator.hasNext()) {
 			Artifact artifact = artifactsIterator.next();
 			stringBuilder.append("  " + artifact.toString());
-
+			if(artifactsIterator.hasNext()) {
+				stringBuilder.append(", ");
+			}
+			stringBuilder.append("\n");
 		}
+		stringBuilder.append(" ]\n}\n");
 		return (stringBuilder.toString());
 	}
 

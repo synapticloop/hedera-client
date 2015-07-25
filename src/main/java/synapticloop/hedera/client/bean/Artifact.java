@@ -26,7 +26,6 @@ public class Artifact {
 	private String artifactPath = null;
 	private String binaryPath = null;
 
-	private String org = null;
 	private String name = null;
 	private String version = null;
 	private String type = null;
@@ -36,7 +35,6 @@ public class Artifact {
 	public Artifact(Node node) throws HederaException {
 		NamedNodeMap attributes = node.getAttributes();
 
-		this.org = HederaUtils.getNodeValue(attributes, "org");
 		this.name  = HederaUtils.getNodeValue(attributes, "name");
 		this.version  = HederaUtils.getNodeValue(attributes, "version");
 		this.type = HederaUtils.getNodeValue(attributes, "type");
@@ -64,11 +62,8 @@ public class Artifact {
 		if(null == url) {
 			StringBuilder artifactPathBuilder = new StringBuilder();
 			StringBuilder binaryPathBuilder = new StringBuilder();
-			if(null != org) {
-				artifactPathBuilder.append(org + "/");
-			}
 			if(null != name) {
-				artifactPathBuilder.append(name + "/");
+				artifactPathBuilder.append(name.replaceAll("-", "/") + "/");
 				binaryPathBuilder.append(name);
 			}
 			if(null != version) {
@@ -76,7 +71,6 @@ public class Artifact {
 				binaryPathBuilder.append(version);
 			}
 			if(null != type) {
-				artifactPathBuilder.append(type + "/");
 				binaryPathBuilder.append(".");
 				binaryPathBuilder.append(type);
 			}
@@ -179,8 +173,7 @@ public class Artifact {
 		if(null != url && url.trim().length() != 0) {
 			stringBuilder.append("{ \"url\":\"" + url + "\", ");
 		} else {
-			stringBuilder.append("{ \"org\":\"" + org + "\", ");
-			stringBuilder.append("\"name\":\"" + name + "\", ");
+			stringBuilder.append("{ \"name\":\"" + name + "\", ");
 			stringBuilder.append("\"version\":\"" + version + "\", ");
 			stringBuilder.append("\"type\":\"" + type + "\", ");
 		}
@@ -193,7 +186,7 @@ public class Artifact {
 				stringBuilder.append(", ");
 			}
 		}
-		stringBuilder.append(" ] }\n");
+		stringBuilder.append(" ] }");
 		return (stringBuilder.toString());
 	}
 }
